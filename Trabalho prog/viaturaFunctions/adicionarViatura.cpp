@@ -2,9 +2,9 @@
 #include "../structs/cad.h"
 #include "../viaturaFunctions\verViatura.cpp"
 #ifdef _WIN32
-#define PATH_PESSOA "bancoDados\\viaturas.txt"
+#define PATH_VIATURAS "bancoDados\\viaturas.txt"
 #else
-#define PATH_PESSOA "bancoDados/viaturas.txt"
+#define PATH_VIATURAS "bancoDados/viaturas.txt"
 #endif
 
 void addNewNode(Nodo* &list, void* item) {
@@ -14,8 +14,8 @@ void addNewNode(Nodo* &list, void* item) {
     list = novo;
 }
 
-void saveViaturasToFile(Nodo* listViaturasFull) {
-    FILE* file = fopen(PATH_PESSOA, "a");
+void saveViaturasToFile(Nodo* &listViaturasFull) {
+    FILE* file = fopen(PATH_VIATURAS, "a");
     if (file == NULL) {
         perror("Erro ao abrir o arquivo");
         return;
@@ -35,7 +35,7 @@ void saveViaturasToFile(Nodo* listViaturasFull) {
 }
 
 void lerViaturasDoArquivo(Nodo* &listViaturas) {
-    FILE* file = fopen(PATH_PESSOA, "r");
+    FILE* file = fopen(PATH_VIATURAS, "r");
     if (file == NULL) {
         perror("Erro ao abrir o arquivo");
         return;

@@ -30,8 +30,11 @@ int main() {
     Nodo *listViaturas = NULL;
     Nodo *listViaturasFull = NULL;
     Nodo *listPoliciais = NULL;
-    Nodo *listPessoas = NULL;
 
+    Nodo *listPessoas = NULL;
+    Nodo *listPessoasFull = NULL;
+
+    lerPessoasDoArquivo(listPessoasFull);
     menu(listViaturas, listViaturasFull, listPoliciais, listPessoas); 
     return 0;
 }

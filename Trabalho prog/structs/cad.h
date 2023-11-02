@@ -22,18 +22,17 @@ struct policiais {
 
 typedef struct policiais Policiais;
 
-struct pessoas {
-    char nome[MAX];
-    char CPF[MAX];
-    char cidade[MAX];
-    int idade;
-    int passagens;
-    int quantInadi;
-    char nomeIndadi[MAX];
-    struct pessoas *prox;
+struct pessoa {
+    char nome[50];
+    char CPF[12];
+    char cidade[50];
+    int passagensPolicia;
+    int ni;
+    char inadimplencias[100][50];
+    struct pessoa *prox;
 };
 
-typedef struct pessoas Pessoas;
+typedef struct pessoa Pessoa;
 
 struct viatura {
     int codigo;
