@@ -105,7 +105,7 @@ void viaturaLogin(Nodo* &listViaturas, Nodo* &listViaturasFull) {
         getViaturaInfo(&codeViatura, &quantPM);
 
         if (!veriQuantOp2(quantPM)) {
-            printf("Autorização de embarque negada!");
+            printf("Autorização de embarque negada!\n");
             return;
         }
 
@@ -132,7 +132,7 @@ void viaturaLogin(Nodo* &listViaturas, Nodo* &listViaturasFull) {
         saveViaturasToFile(listViaturas);
 
     } else {
-        printf("Opção não existente!");
+        printf("Opção não existente!\n");
         return;
     }
 }

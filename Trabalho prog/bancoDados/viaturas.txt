@@ -1,4 +1,23 @@
-5. Análise de Dados de Uso em Tempo Real:
+001
+regular
+002
+especializada
+003
+regular
+004
+especializada
+005
+especializada
+006
+regular
+007
+regular
+008
+regular
+009
+especializada
+010
+regular
+0034
+regular
 
-Descrição: Colete dados de uso em tempo real do aplicativo, como cliques, toques e movimentos do cursor. Isso pode ajudar a identificar áreas problemáticas em tempo real.
-Métricas: Padrões de uso, áreas comuns de interação, taxas de abandono.

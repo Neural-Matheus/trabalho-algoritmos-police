@@ -10,25 +10,25 @@ struct nodo {
 typedef struct nodo Nodo;
 
 struct policiais {
-    char nome[MAX];
-    char CPF[MAX];
-    char nomeGuerra[MAX];
-    char cidade[MAX];
+    char nome[MAX+1];
+    char CPF[MAX+1];
+    char nomeGuerra[MAX+1];
+    char cidade[MAX+1];
     int idade;
-    char cargo[MAX];
-    char senha[MAX];
+    char cargo[MAX+1];
+    char senha[MAX+1];
     struct policiais *prox;
 };
 
 typedef struct policiais Policiais;
 
 struct pessoa {
-    char nome[50];
-    char CPF[12];
-    char cidade[50];
+    char nome[50+1];
+    char CPF[12+1];
+    char cidade[50+1];
     int passagensPolicia;
     int ni;
-    char inadimplencias[100][50];
+    char inadimplencias[100+1][50+1];
     struct pessoa *prox;
 };
 
@@ -41,3 +41,18 @@ struct viatura {
 };
 
 typedef struct viatura Viaturas;
+
+
+struct viaturaEmUso {
+    char descricao[50+1];
+    char localizacao[50+1];
+    struct viaturaEmUso* prox; 
+};
+
+typedef struct viaturaEmUso ViaturaEmUso;
+
+
+struct ocorrenciaDP {
+    int quant;
+    char CPFs[100+1][12+1];
+};
