@@ -22,21 +22,34 @@ struct policiais {
 
 typedef struct policiais Policiais;
 
-struct pessoa {
-    char nome[50+1];
-    char CPF[12+1];
-    char cidade[50+1];
+struct pessoa {  
+    char nome[MAX];
+    char CPF[MAX];
+    char cidade[MAX+1];
+    int idade;
     int passagensPolicia;
-    int ni;
-    char inadimplencias[100+1][50+1];
-    struct pessoa *prox;
+    char passagens[MAX][MAX];
+    int nInadimplencias;
+    char inadimplencias[MAX][MAX];
 };
+
 
 typedef struct pessoa Pessoa;
 
 struct viatura {
-    int codigo;
+    char codigo[MAX];
     char tipoViatura[MAX];
+    char **nomesPoliciais;
+    int numPoliciais;
+    int quantUso;
+    bool usoAtual;
+    char ocorrendo[MAX];
+    char estadoAtual[MAX];
+    char descricao[100];
+    char localiza[100];
+    char temBoletim[100];
+    Pessoa **presos;  
+    int numPresos;
     struct viatura *prox;
 };
 
@@ -46,13 +59,48 @@ typedef struct viatura Viaturas;
 struct viaturaEmUso {
     char descricao[50+1];
     char localizacao[50+1];
-    struct viaturaEmUso* prox; 
+    struct viaturaEmUso *prox; 
 };
 
 typedef struct viaturaEmUso ViaturaEmUso;
-
 
 struct ocorrenciaDP {
     int quant;
     char CPFs[100+1][12+1];
 };
+
+struct ocorrenciaCOPOM {
+    char tipoPolicial[MAX];
+    char descricao[100+1];
+    char localizacao[50+1];
+    char idViatura[MAX];
+    bool uso;
+    bool temBoletim;
+    struct ocorrenciaCOPOM *prox;
+
+};
+
+typedef struct ocorrenciaCOPOM ocorrenciaCOPOM;
+
+struct viaturaLog {
+    char codigo[MAX];
+    char tipoViatura[MAX];
+    char **nomesPoliciais;
+    int numPoliciais;
+    int quantUso;
+    bool usoAtual;
+    char ocorrendo[MAX];
+    char estadoAtual[MAX];
+    char descricao[100];
+    char localiza[100];
+    struct viaturaLog *prox;
+};
+
+typedef struct viaturaLog ViaturasLog;
+
+struct boletim {
+    char boletimOco[10000];
+    struct boletim *prox;
+};
+
+typedef struct boletim Boletim;

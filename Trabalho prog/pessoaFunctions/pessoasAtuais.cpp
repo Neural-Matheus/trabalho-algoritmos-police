@@ -7,44 +7,47 @@
 #define PATH_PESSOAS "bancoDados/pessoas.txt"
 #endif
 
-void addNewPessoaNode(Nodo* &listPessoas, Pessoa* pessoa) {
-    Nodo *novo = (Nodo*)malloc(sizeof(Nodo));
-    novo->item = pessoa;
-    novo->prox = listPessoas;
-    listPessoas = novo;
+int preencherPessoa(FILE *arquivo, Pessoa *pessoa) {
+    if (fscanf(arquivo, " %[^\n]", pessoa->nome) != 1) return 0;
+    if (fscanf(arquivo, " %s", pessoa->CPF) != 1) return 0;
+    if (fscanf(arquivo, " %[^\n]", pessoa->cidade) != 1) return 0;
+    if (fscanf(arquivo, "%d", &pessoa->idade) != 1) return 0;
+    if (fscanf(arquivo, "%d", &pessoa->passagensPolicia) != 1) return 0;
+
+    for (int i = 0; i < pessoa->passagensPolicia; i++) {
+        if (fscanf(arquivo, " %[^\n]", pessoa->passagens[i]) != 1) return 0;
+    }
+
+    if (fscanf(arquivo, "%d", &pessoa->nInadimplencias) != 1) return 0;
+
+    for (int i = 0; i < pessoa->nInadimplencias; i++) {
+        if (fscanf(arquivo, " %[^\n]", pessoa->inadimplencias[i]) != 1) return 0;
+    }
+
+    return 1;
 }
 
-void lerPessoasDoArquivo(Nodo* &listPessoas) {
-    FILE* file = fopen(PATH_PESSOAS, "r");
-    if (file == NULL) {
-        perror("Erro ao abrir o arquivo de pessoas");
+void adicionarPessoa(Nodo **lista, Pessoa *pessoa) {
+    Nodo *novo = (Nodo*)malloc(sizeof(Nodo));
+    novo->item = pessoa;
+    novo->prox = *lista;
+    *lista = novo;
+}
+
+void lerArquivoPessoas(Nodo* &listPessoas) {
+    FILE *arquivo = fopen(PATH_PESSOAS, "r");
+
+    if (arquivo == NULL) {
+        perror("Erro ao abrir o arquivo");
         return;
     }
 
-    Pessoa pessoa;
-    int x = 0;
-
-    while (fscanf(file, " %[^\n]", pessoa.nome) != EOF) {
-        fgetc(file);
-        fscanf(file, " %s", pessoa.CPF);
-        fgetc(file);
-        fscanf(file, " %[^\n]", pessoa.cidade);
-        fgetc(file);
-        fscanf(file, "%d", &pessoa.passagensPolicia);
-        fgetc(file);
-
-        for (int j = 0; j < 2; j++) {
-            int ni;
-            fscanf(file, "%d", &ni);
-
-            for(int i = 0; i < ni; i++) {
-                fscanf(file, " %[^\n]", pessoa.inadimplencias[i]);
-                x++;
-            }
-        }
-
-        addNewPessoaNode(listPessoas, &pessoa);
+    Pessoa *novaPessoa = (Pessoa *)malloc(sizeof(Pessoa));
+    while (preencherPessoa(arquivo, novaPessoa) == 1) {
+        adicionarPessoa(&listPessoas, novaPessoa);
+        novaPessoa = (Pessoa *)malloc(sizeof(Pessoa));
     }
+    free(novaPessoa);  // Libera a memória alocada para a última pessoa que não foi adicionada à lista
 
-    fclose(file);
+    fclose(arquivo);
 }

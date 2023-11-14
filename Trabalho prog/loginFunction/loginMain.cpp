@@ -16,8 +16,7 @@ void encryptPassword(char *password) {
     }
 }
 
-// Função para realizar o login
-void loginInit(Nodo *listPoliciais, char patente[][20], int numPatentes) {
+int loginInit(Nodo *listPoliciais, char patente[][20], int numPatentes) {
     Nodo *aux = listPoliciais;
     char nomeGuerra[100]; 
 
@@ -28,7 +27,7 @@ void loginInit(Nodo *listPoliciais, char patente[][20], int numPatentes) {
     int nomeEncontrado = 0;
     
     while (aux != NULL) {
-        if (strcmp(((Policiais*)aux->item)->nomeGuerra, nomeGuerra) == 0) {
+        if (strcasecmp(((Policiais*)aux->item)->nomeGuerra, nomeGuerra) == 0) {
             nomeEncontrado = 1;
             for (int i = 0; i < numPatentes; i++) {
                 if (strcmp(patente[i], ((Policiais*)aux->item)->cargo) == 0) {
@@ -42,11 +41,9 @@ void loginInit(Nodo *listPoliciais, char patente[][20], int numPatentes) {
                     encryptPassword(senhaArquivo); 
 
                     if (strcmp(senhaArquivo, senhaCripto) == 0) {
-                        printf("Login bem-sucedido!\n");
-                        return;
+                        return 1;  
                     } else {
-                        printf("Senha incorreta!\n");
-                        return;
+                        return 0;
                     }
                 }
             }
@@ -55,7 +52,8 @@ void loginInit(Nodo *listPoliciais, char patente[][20], int numPatentes) {
     }
     
     if (!nomeEncontrado) {
-        printf("Nome de guerra inexistente!\n");
+        return -1; 
     }
-}
 
+    return 0;
+}

@@ -1,29 +1,32 @@
 #include <bits/stdc++.h>
 #include "../structs/cad.h"
 
-#ifdef _WIN32
-#define PATH_LOGSOCORRENCIAS "bancoDados\\logsOcorrencias.txt"
-#else
-#define PATH_LOGSOCORRENCIAS "bancoDados/logsOcorrencias.txt"
-#endif
+
 
 void pesquisaCPF(Nodo *listPessoas) {
-    char busqCPF[13]; 
+    char busqCPF[13];
     int op;
 
     printf("SPM - Viatura: Pesquisar Por CPF\n");
     printf("CPF: ");
-    scanf(" %12s", busqCPF); 
+    scanf(" %[^\n]", busqCPF);
+
 
     Nodo *current = listPessoas;
 
-    while (current != NULL && strcmp(((pessoa*)current->item)->CPF, busqCPF) != 0) {
+    while (current != NULL && strcasecmp(((Pessoa *)current->item)->CPF, busqCPF) != 0) {
         current = current->prox;
     }
 
     if (current != NULL) {
-        printf("Nome: %s\n",  ((pessoa*)current->item)->nome);
-        printf("CPF: %s\n", ((pessoa*)current->item)->CPF);
+        printf("Nome: %s\n", ((Pessoa *)current->item)->nome);
+        printf("CPF: %s\n", ((Pessoa *)current->item)->CPF);
+        printf("Cidade: %s\n", ((Pessoa *)current->item)->cidade);
+        printf("Passagens pela polícia: %d\n", ((Pessoa *)current->item)->passagensPolicia);
+
+        for (int i = 0; i < ((Pessoa *)current->item)->nInadimplencias; ++i) {
+            printf("Inadimplência %d: %s\n", i + 1, ((Pessoa *)current->item)->inadimplencias[i]);
+        }
 
         printf("1 - Encerrar Visualização\n");
         scanf("%d", &op);
@@ -32,22 +35,48 @@ void pesquisaCPF(Nodo *listPessoas) {
 
         printf("1 - Encerrar Visualização\n");
         scanf("%d", &op);
+        return;
     }
+    return;
 }
-void solicitarReforco() {
-    int op; 
 
-    printf("SPM - Viatura:Solicitar Reforços\n");
-    printf("1 - Confirmar Solicitação de Reforços\n");
-    printf("2 - Cancelar\n");
-    scanf("%d", &op);
-    
-    if (op == 1) {
-        return;
-    } else {
-        return;
+void solicitarReforco(Nodo* &listViaturas, Nodo* &pOcorrencias) {
+    printf("SPM - Viatura: Solicitar Reforços\n");
+
+    Nodo* currentViatura = listViaturas;
+
+    while (currentViatura != NULL) {
+        Viaturas* viatu = (Viaturas*)currentViatura->item;
+
+        // Atende ao pedido de reforço apenas se a viatura estiver em estado neutro
+        if (viatu != NULL && strcmp(viatu->estadoAtual, "neutro") == 0) {
+            // Mostra detalhes do pedido de reforço
+            printf("Pedido de Reforço:\n");
+            printf("Descrição: %s\n", viatu->descricao);
+            printf("Localização: %s\n", viatu->localiza);
+
+            int op;
+            printf("1 - Confirmar Solicitação de Reforço\n");
+            printf("2 - Cancelar\n");
+            scanf("%d", &op);
+
+            if (op == 1) {
+                // Atualiza o estado da viatura para "reforço"
+                strcpy(viatu->estadoAtual, "neutro");
+
+                printf("Pedido de reforço atendido pela viatura %s\n", viatu->codigo);
+            } else {
+                printf("Pedido de reforço cancelado.\n");
+            }
+        }
+
+        currentViatura = currentViatura->prox;
     }
+    return;
 }
+
+
+
 void addToList(Nodo** head, void* item) {
     Nodo* newNode = (Nodo*)malloc(sizeof(Nodo));
     if (newNode == NULL) {
@@ -60,27 +89,6 @@ void addToList(Nodo** head, void* item) {
 }
 
 
-void saveListToFile(Nodo* head) {
-    FILE* file = fopen("PATH_LOGSOCORRENCIAS", "w");
-    if (file == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
-        exit(1);
-    }
-
-    Nodo* current = head;
-    while (current != NULL) {
-        struct ocorrenciaDP* ocorrencia = (struct ocorrenciaDP*)current->item;
-        fprintf(file, "Quantidade: %d\n", ocorrencia->quant);
-        for (int i = 0; i < ocorrencia->quant; i++) {
-            fprintf(file, "CPF %d: %s\n", i + 1, ocorrencia->CPFs[i]);
-        }
-        fprintf(file, "\n");
-
-        current = current->prox;
-    }
-
-    fclose(file);
-}
 
 Nodo* pesquisaCPFPri(Nodo *listPessoas, const char *busqCPF) {
     Nodo *current = listPessoas;
@@ -92,7 +100,7 @@ Nodo* pesquisaCPFPri(Nodo *listPessoas, const char *busqCPF) {
     return current;
 }
 
-void prisaoAndamento(Nodo* &listPessoas) {
+void prisaoAndamento(Nodo* &listPessoas, Nodo* &listViaturas) {
     int quantCondu;
 
     printf("SPM - Viatura: Prisão em Andamento\n");
@@ -106,27 +114,39 @@ void prisaoAndamento(Nodo* &listPessoas) {
 
     for (int i = 0; i < quantCondu; i++) {
         printf("CPF %d: ", i + 1);
-        scanf(" %12s", cpf);
+        scanf(" %[^\n]", cpf);
 
         Nodo *encontrado = pesquisaCPFPri(listPessoas, cpf);
 
         if (encontrado != NULL) {
             presos[i] = (Pessoa *)encontrado->item;
         } else {
-            printf("Pessoa com CPF %s não encontrada na lista.\n");
+            printf("Pessoa com CPF %s não encontrada na lista.\n", cpf);
             presos[i] = NULL; 
         }
     }
 
+    // Adiciona os presos à viatura
+    Nodo *currentViatura = listViaturas;
+    while (currentViatura != NULL) {
+        Viaturas* viatu = (Viaturas*)currentViatura->item;
+        if (strcmp(viatu->estadoAtual, "em ocorrência") == 0) {
+            viatu->presos = presos;
+            viatu->numPresos = quantCondu;
+            break;
+        }
+        currentViatura = currentViatura->prox;
+    }
+
+    printf("Presos:\n");
     for (int i = 0; i < quantCondu; i++) {
         if (presos[i] != NULL) {
-            free(presos[i]);
+            printf("\t- %s, %s;\n", presos[i]->nome, presos[i]->CPF);
         }
     }
-    free(presos);
 }
 
-void viaturaOcorrencia(Nodo *listPessoas) {
+void viaturaOcorrencia(Nodo* &listPessoas, Nodo* &listViaturas, Nodo* &pOcorrencias, Nodo* &qOcorrencias, Nodo* &pLogRegistro, Nodo* &qLogRegistro, Nodo* &listViaturasFinalizadas) {
     int op;
 
     printf("SPM - Viatura Ocorrência\n");
@@ -136,11 +156,34 @@ void viaturaOcorrencia(Nodo *listPessoas) {
     printf("4 - Encerrar Ocorrência\n");
     scanf("%d", &op);
 
-    if (op == 1) {
-        pesquisaCPF(listPessoas);
-    } else if (op == 2) {
-        solicitarReforco();
-    } else if (op == 3) {
-        prisaoAndamento(listPessoas);
+    Nodo* aux = listViaturas;
+    Nodo* auxv2 = listPessoas;
+
+    while (aux != NULL) {
+        Viaturas* verifi = (Viaturas*)aux->item;
+
+        if (strcmp(verifi->estadoAtual, "em ocorrência") == 0) {
+            if (op == 1) {
+                strcpy(verifi->estadoAtual, "pesquisando CPF.");
+                pesquisaCPF(listPessoas);
+            } else if (op == 2) {
+                strcpy(verifi->estadoAtual, "solicitando reforços.");
+                solicitarReforco(listViaturas, pOcorrencias);
+            } else if (op == 3) {
+                strcpy(verifi->estadoAtual, "prisão em andamento.");
+                prisaoAndamento(listPessoas, listViaturas);
+            } else if (op == 4) {
+                strcpy(verifi->estadoAtual, "finalizada.");
+                strcpy(verifi->ocorrendo, "acabada");
+                verifi->usoAtual = false;
+                encerrarOcorrencia(pOcorrencias, qOcorrencias, listViaturas, listViaturasFinalizadas, verifi->codigo, verifi->tipoViatura);
+
+                strcpy(verifi->estadoAtual, "neutro");
+                return;
+            }
+        }
+
+        aux = aux->prox;
     }
+
 }

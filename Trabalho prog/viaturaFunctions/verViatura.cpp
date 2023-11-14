@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 
-void getViaturaInfo(int *codeViatura, int *quantPM) {
+void getViaturaInfo(char *codeViatura, int *quantPM) {
     printf("Código da viatura: ");
-    scanf("%d", codeViatura);
+    scanf(" %[^\n]", codeViatura);
     printf("Quantidade de PMs: ");
     scanf("%d", quantPM);
 }
