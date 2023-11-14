@@ -35,7 +35,7 @@ void lerPoliciaisDoArquivo(Nodo* &listPoliciais) {
     while (fgets(line, sizeof(line), file) != NULL) {
         char nome[MAX + 1];
         char CPF[MAX + 1];
-        char nomeGuerra[MAX + 1];
+        char nomeGuerra[100];
         char cidade[MAX + 1];
         int idade;
         char cargo[MAX + 1];

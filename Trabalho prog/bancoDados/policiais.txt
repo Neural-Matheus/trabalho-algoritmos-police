@@ -1,6 +1,6 @@
 Lucas Oliveira
 11122233344
-Cobra
+Galo
 Brasília
 35
 Soldado
@@ -91,7 +91,7 @@ Soldado
 hi6vpm754
 Rafael Lima
 45678901234
-Cobra
+Mamute
 Brasília
 32
 Soldado

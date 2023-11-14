@@ -1,67 +1,46 @@
 #include <bits/stdc++.h>
 #include "../structs/cad.h"
-#include "viaturaOcorrencia.cpp"
+#include "../arqV2.h"
 
-#ifdef _WIN32
-#define PATH_LOGVIATURASEMUSO "bancoDados\\logsViaturas.txt"
-#else
-#define PATH_LOGVIATURASEMUSO "bancoDados/logsViaturas.txt"
-#endif
 
-void addToListVi(Nodo** head, void* item) {
-    Nodo* newNode = (Nodo*)malloc(sizeof(Nodo));
-    if (newNode == NULL) {
-        printf("Erro na alocação de memória.\n");
-        exit(1);
-    }
-    newNode->item = item;
-    newNode->prox = *head;
-    *head = newNode;
-}
+void viaturaEmUso(Nodo* &listViaturas, Nodo* &listPessoas, Nodo* &listPessoasFull, Nodo* &listViaturasEmUso, Nodo* &listOcorrencias, Nodo* &pOcorrencia, Nodo* &qOcorrencia, Nodo* &pRegistros, Nodo* &qRegistros, Nodo* &listViaturasFinalizadas) {
+    char codeViatura[50];
+    printf("SPM - Viatura Em Uso\n");
+    printf("Identificador da viatura: ");
+    scanf(" %[^\n]", codeViatura);
 
-void saveListToFileVi(Nodo* head, const char* filename) {
-    FILE* file = fopen(filename, "w");
-    if (file == NULL) {
-        printf("Erro ao abrir o arquivo %s.\n", filename);
-        exit(1);
-    }
+    Nodo *aux = listViaturas;
 
-    Nodo* current = head;
-    while (current != NULL) {
-        ViaturaEmUso* viatura = (ViaturaEmUso*)current->item;
-        fprintf(file, "Descrição: %s\n", viatura->descricao);
-        fprintf(file, "Localização: %s\n", viatura->localizacao);
-        fprintf(file, "\n");
+    while (aux != NULL) {
+        Viaturas* verifi = (Viaturas*)aux->item;
 
-        current = current->prox;
-    }
+        if (verifi->usoAtual == false && (strcmp(verifi->estadoAtual, "neutro") == 0  || strcpy(verifi->estadoAtual, "finalizada"))) {
+            printf("\nSPM - Viatura em Uso\n");
+            printf("Viatura: %s\n", verifi->codigo);
+            printf("Estado atual: %s\n", verifi->estadoAtual);
+        }
 
-    fclose(file);
-}
+        if (verifi->usoAtual == true && strcmp(verifi->codigo, codeViatura) == 0) {
+            strcpy(verifi->ocorrendo, "ocorrendo");
+            printf("\nSPM - Viatura Chamada Policial\n");
+            printf("Descrição: %s\n", verifi->descricao);
+            printf("Localização: %s\n", verifi->localiza);
+            printf("Confirmada ação policial - 1  Ação Policial Dispensada - 2\n");
+            int op; scanf("%d", &op);
+            
+            if (op == 1) {
+                viaturaOcorrencia(listPessoas, listViaturas, pOcorrencia, qOcorrencia, pRegistros, qRegistros, listViaturasFinalizadas);
+            } 
+            return;  
+        }
 
-void viaturaEmUso(Nodo* &listViaturas, Nodo* &listViaturasFull, Nodo* &listPessoasFull, Nodo* &listViaturasEmUso) {
-    int op;
-
-    printf("SPM - Viatura Chamada Policial\n");
-    ViaturaEmUso* novaViatura = (ViaturaEmUso*)malloc(sizeof(ViaturaEmUso));
-    if (novaViatura == NULL) {
-        printf("Erro na alocação de memória.\n");
-        exit(1);
-    }
-
-    printf("Descrição: ");
-    scanf(" %[^\n]", novaViatura->descricao);
-    printf("Localização: ");
-    scanf(" %[^\n]", novaViatura->localizacao);
-    printf("Confirmada Ação Policial - 1    Ação Policial Dispensada - 2");
-    scanf("%d", &op);
-
-    addToListVi(&listViaturasEmUso, novaViatura);
-    saveListToFileVi(listViaturasEmUso, PATH_LOGVIATURASEMUSO);
-
-    if (op == 1) {
-        viaturaOcorrencia(listPessoasFull);
-    } else {
-        return;
+        aux = aux->prox;
     }
 }
+
+
+    
+
+
+
+
